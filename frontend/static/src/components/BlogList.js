@@ -9,6 +9,7 @@ function BlogItem(props){
             <div className="d-flex w-100 justify-content-between">
               <h5 className="mb-3 left-side-blogtitle">{props.blog.title}</h5>
             </div>
+              <p className='author'>{props.blog.author}</p>
               <p className="mb-1 left-side-blogbody">{props.truncate(props.blog.body)}</p>
           </div>
         </div>
