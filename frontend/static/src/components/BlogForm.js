@@ -11,7 +11,7 @@ class BlogForm extends Component{
       author: '',
       isTopStory: false,
       created_at: new Date(),
-      category:'',
+      category:'Travel',
       status:'Draft',
     }
     this.handleChange = this.handleChange.bind(this)
@@ -21,7 +21,7 @@ class BlogForm extends Component{
   }
   render(){
     return(
-      <form className="col-12 col-md-6 mb-5" onSubmit={(event) => this.props.addBlog(event, this.state)}>
+      <form className="col-12 col-md-6 mb-5" onSubmit={(event) => {this.props.addBlog(event, this.state); this.setState({title:'', body:'', author:''})}}>
         <div className="form-group">
           <label htmlFor="title">Title</label>
           <input type="text" className ="form-control" id="title" name="title" value={this.state.title} onChange={this.handleChange}/>
@@ -47,8 +47,8 @@ class BlogForm extends Component{
         <label htmlFor="status">Post Status</label>
         <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleChange}>
           <option>Draft</option>
-          <option>Submit</option>
-          <option>Publish</option>
+          <option>Submitted</option>
+          <option>Published</option>
         </select>
         </div>
         <button type="submit" className="btn btn-primary">Add Post</button>

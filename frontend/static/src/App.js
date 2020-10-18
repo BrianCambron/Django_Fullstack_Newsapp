@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import BlogList from './components/BlogList';
 import BlogForm from './components/BlogForm';
+import StatusList from './components/StatusList'
 import './App.css';
 
 
@@ -11,7 +12,7 @@ class App extends Component{
       blogs: [],
       selection: null,
       pickedBlog: {},
-      display: false,
+      display: 'home',
     }
   this.handleClick = this.handleClick.bind(this)
   this.truncate = this.truncate.bind(this)
@@ -37,18 +38,17 @@ class App extends Component{
     })
   .then(response => response.json())
   .then(data => {
-    const blogs = [...this.state.blogs, data]
-    this.setState({blogs})
+    const blogs = [...this.state.blogs, data];
+    this.setState({blogs});
   })
   }
 
   handleClick(event) {
-    this.setState({display:false})
     if(event.target.dataset.filter === 'all') {
       this.setState({selection: null});
     } else {
       this.setState({selection: event.target.dataset.filter});
-    }
+      }
   }
 
   pickBlog(id){
@@ -61,14 +61,6 @@ class App extends Component{
   truncate(str) {
     return str.length > 10 ? str.substring(0, 30) + "..." : str;
   }
-  toggleDisplay(){
-      if (this.state.display === true){
-        this.setState({display: false})
-      }
-      else{
-        this.setState({display:true})
-      }
-  }
 
   render(){
     let selection = this.state.blogs;
@@ -80,7 +72,7 @@ class App extends Component{
     const blogs = selection
       .filter(blog => !blog.isTopStory)
       .map(blog =>(
-          <div onClick={() => this.pickBlog(blog.id)} key={blog.id} className="col">
+          <div onClick={() => this.pickBlog(blog.id)} key={blog.id}>
             <ul className="list-group mb-1">
               <div className="list-group-item list-group-item-action">
                   <h5 className="mb-3 right-side-blogtitle">{blog.title}</h5>
@@ -90,32 +82,33 @@ class App extends Component{
           </div>
         )
       );
-
+      let html;
+      if(display === 'home'){
+        html = <div className="row"> <div className="col-8"><h5 className='top-stories-heading'>Top Stories</h5><BlogList blogs={selection} truncate={this.truncate} pickBlog={this.pickBlog}/></div>
+                    <div className="col-4"><h5 className="last-week-stories">Last Week</h5>
+                    {blogs}
+                </div></div>
+      } else if (display === 'form') {
+        html = <BlogForm addBlog={this.addBlog}/>
+      } else if (display === 'status') {
+        html = <StatusList blogs={this.state.blogs}/>
+      }
 
     return(
       <React.Fragment>
       <div>
         <nav className="navbar navbar-dark bg-dark">
-          <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="all">HomePage</button>
+          <button className="btn btn-link" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>
           <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="Entertainment">Entertainment</button>
           <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="Sports">Sports</button>
           <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="Travel">Travel</button>
           <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="Food">Food</button>
-          <button className="btn btn-link" onClick={this.toggleDisplay}type='button'>Form</button>
+          <button className="btn btn-link" onClick={() => this.setState({display: 'status'})} type='button'>Status List</button>
+          <button className="btn btn-link" onClick={() => this.setState({display: 'form'})} type='button'>Form</button>
         </nav>
-        {display === false?
         <div className="row no-gutters">
-          <div className='col'>
-            <h5 className='top-stories-heading'>Top Stories</h5>
-            <BlogList blogs={selection} truncate={this.truncate} pickBlog={this.pickBlog}/>
-          </div>
-          <div className="right-side col">
-            <h5 className="last-week-stories">Last Week</h5>
-            {blogs}
-          </div>
-         </div>
-         : <BlogForm addBlog={this.addBlog}/>
-       }
+            {html}
+        </div>
         <FullBlog pickedBlog={this.state.pickedBlog}/>
       </div>
       </React.Fragment>
