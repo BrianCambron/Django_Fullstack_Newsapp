@@ -19,6 +19,7 @@ class App extends Component{
   this.pickBlog = this.pickBlog.bind(this)
   this.addBlog = this.addBlog.bind(this)
   this.deleteBlog = this.deleteBlog.bind(this)
+  this.editBlog = this.editBlog.bind(this)
   }
 
   componentDidMount(){
@@ -43,7 +44,7 @@ class App extends Component{
   })
   }
   deleteBlog(id){
-  fetch(`api/v1/${id}`, {
+  fetch(`api/v1/${id}/`, {
     method: 'DELETE',
   })
   .then(response => response)
@@ -55,6 +56,18 @@ class App extends Component{
     this.setState({blogs})
   })
   .catch(error => console.log("Error:", error));
+  }
+  editBlog(data, id){
+    fetch(`api/v1/${id}/`,{
+      method:'PUT',
+      headers: {
+      'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.log('Error:', error));
   }
 
   handleClick(event) {
@@ -105,7 +118,7 @@ class App extends Component{
       } else if (display === 'form') {
         html = <BlogForm addBlog={this.addBlog}/>
       } else if (display === 'status') {
-        html = <StatusList blogs={this.state.blogs} deleteBlog={this.deleteBlog}/>
+        html = <StatusList blogs={this.state.blogs} deleteBlog={this.deleteBlog} editBlog={this.editBlog}/>
       }
 
     return(
