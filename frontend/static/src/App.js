@@ -18,7 +18,7 @@ class App extends Component{
   this.truncate = this.truncate.bind(this)
   this.pickBlog = this.pickBlog.bind(this)
   this.addBlog = this.addBlog.bind(this)
-  this.toggleDisplay = this.toggleDisplay.bind(this)
+  this.deleteBlog = this.deleteBlog.bind(this)
   }
 
   componentDidMount(){
@@ -41,6 +41,20 @@ class App extends Component{
     const blogs = [...this.state.blogs, data];
     this.setState({blogs});
   })
+  }
+  deleteBlog(id){
+  fetch(`api/v1/${id}`, {
+    method: 'DELETE',
+  })
+  .then(response => response)
+  .then(data => {
+    const blogs = [...this.state.blogs]
+    console.log('blogs', blogs)
+    const index = blogs.findIndex(blog => blog.id === id)
+    blogs.splice(index,1);
+    this.setState({blogs})
+  })
+  .catch(error => console.log("Error:", error));
   }
 
   handleClick(event) {
@@ -91,20 +105,20 @@ class App extends Component{
       } else if (display === 'form') {
         html = <BlogForm addBlog={this.addBlog}/>
       } else if (display === 'status') {
-        html = <StatusList blogs={this.state.blogs}/>
+        html = <StatusList blogs={this.state.blogs} deleteBlog={this.deleteBlog}/>
       }
 
     return(
       <React.Fragment>
       <div>
         <nav className="navbar navbar-dark bg-dark">
-          <button className="btn btn-link" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>
-          <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="Entertainment">Entertainment</button>
-          <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="Sports">Sports</button>
-          <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="Travel">Travel</button>
-          <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="Food">Food</button>
-          <button className="btn btn-link" onClick={() => this.setState({display: 'status'})} type='button'>Status List</button>
-          <button className="btn btn-link" onClick={() => this.setState({display: 'form'})} type='button'>Form</button>
+          <button className="btn btn-dark" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>
+          <button className="btn btn-dark"type='button' onClick={this.handleClick} data-filter="Entertainment">Entertainment</button>
+          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="Sports">Sports</button>
+          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="Travel">Travel</button>
+          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="Food">Food</button>
+          <button className="btn btn-dark" onClick={() => this.setState({display: 'status'})} type='button'>Status List</button>
+          <button className="btn btn-dark" onClick={() => this.setState({display: 'form'})} type='button'>Form</button>
         </nav>
         <div className="row no-gutters">
             {html}
