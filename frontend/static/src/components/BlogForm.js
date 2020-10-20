@@ -44,12 +44,12 @@ class BlogForm extends Component{
           </select>
         </div>
         <div className="form-bottom">
-        <label htmlFor="status">Post Status</label>
-        <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleChange}>
-          <option>Draft</option>
-          <option>Submitted</option>
-          <option>Published</option>
-        </select>
+          <label htmlFor="status">Post Status</label>
+          <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleChange}>
+            <option>Draft</option>
+            <option>Submitted</option>
+            <option>Published</option>
+          </select>
         </div>
         <button type="submit" className="btn btn-primary">Add Post</button>
       </form>

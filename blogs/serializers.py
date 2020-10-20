@@ -7,6 +7,8 @@ from .models import Blog
 
 
 class BlogSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source='user.username')
+    
     class Meta:
         model = Blog
-        fields = ('id', 'title', 'body', 'author', 'isTopStory', 'created_at', 'category', 'status',)
+        fields = ('id', 'title', 'body', 'user', 'isTopStory', 'created_at', 'category', 'status',)

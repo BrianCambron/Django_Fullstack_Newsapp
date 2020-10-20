@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import BlogList from './components/BlogList';
 import BlogForm from './components/BlogForm';
-import StatusList from './components/StatusList'
+import StatusList from './components/StatusList';
+import RegisterForm from './components/RegisterForm';
+import LoginForm from './components/LoginForm'
+import Cookies from 'js-cookie';
 import './App.css';
 
 
@@ -13,26 +16,32 @@ class App extends Component{
       selection: null,
       pickedBlog: {},
       display: 'home',
+      isLoggedIn: Cookies.get('Authorization')? true: false,
     }
-  this.handleClick = this.handleClick.bind(this)
-  this.truncate = this.truncate.bind(this)
-  this.pickBlog = this.pickBlog.bind(this)
-  this.addBlog = this.addBlog.bind(this)
-  this.deleteBlog = this.deleteBlog.bind(this)
-  this.editBlog = this.editBlog.bind(this)
+    this.handleClick = this.handleClick.bind(this)
+    this.truncate = this.truncate.bind(this)
+    this.pickBlog = this.pickBlog.bind(this)
+    this.addBlog = this.addBlog.bind(this)
+    this.deleteBlog = this.deleteBlog.bind(this)
+    this.editBlog = this.editBlog.bind(this)
+    this.registerUser = this.registerUser.bind(this)
+    this.logIn = this.logIn.bind(this)
+    this.logOut = this.logOut.bind(this)
   }
 
   componentDidMount(){
-    fetch('api/v1/')
+    fetch('api/v1/blogs')
     .then(response => response.json())
     .then(data => this.setState({blogs: data}))
     .catch(error => console.log('Error:', error));
   }
   addBlog(event, data){
     event.preventDefault();
-    fetch('api/v1/', {
+    const csrftoken = Cookies.get('csrftoken');
+    fetch('api/v1/blogs/', {
       method: 'POST',
       headers: {
+        'X-CSRFToken': csrftoken,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(data),
@@ -44,8 +53,13 @@ class App extends Component{
   })
   }
   deleteBlog(id){
-  fetch(`api/v1/${id}/`, {
+  const csrftoken = Cookies.get('csrftoken');
+  fetch(`api/v1/blogs/${id}/`, {
     method: 'DELETE',
+    headers:{
+      'X-CSRFToken': csrftoken,
+      'Content-Type': 'application/json'
+    },
   })
   .then(response => response)
   .then(data => {
@@ -58,15 +72,23 @@ class App extends Component{
   .catch(error => console.log("Error:", error));
   }
   editBlog(data, id){
-    fetch(`api/v1/${id}/`,{
+    const csrftoken = Cookies.get('csrftoken');
+    fetch(`api/v1/blogs/${id}/`,{
       method:'PUT',
       headers: {
+      'X-CSRFToken': csrftoken,
       'Content-Type': 'application/json'
       },
       body: JSON.stringify(data),
     })
     .then(response => response.json())
-    .then(data => console.log(data))
+    .then(data => {
+      console.log(data);
+      const blogs = [...this.state.blogs];
+      const index = blogs.findIndex(blog => blog.id === id);
+      blogs[index] = data;
+      this.setState({blogs})
+    })
     .catch(error => console.log('Error:', error));
   }
 
@@ -81,13 +103,70 @@ class App extends Component{
   pickBlog(id){
     const blogPost = this.state.blogs.find(blog => blog.id === id);
     // console.log(id);
-    this.setState({pickedBlog: blogPost});
+    this.setState({pickedBlog: blogPost, display:'pickedBlog'});
     console.log(this.state.pickedBlog);
   }
 
   truncate(str) {
     return str.length > 10 ? str.substring(0, 30) + "..." : str;
   }
+
+  registerUser(event, data){
+  event.preventDefault();
+  const csrftoken = Cookies.get('csrftoken');
+  fetch('/api/v1/rest-auth/registration/', {
+    method:'POST',
+    headers: {
+      'X-CSRFToken': csrftoken,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+    .then(response => response.json())
+    .then(data => {if(data.key){
+        Cookies.set('Authorization', `Token ${data.key}`);
+        this.setState({isLoggedIn:true, display:'home'})
+      }})
+    .catch(error => console.log('Error:', error));
+  }
+
+  logIn(event, data){
+  event.preventDefault();
+  const csrftoken = Cookies.get('csrftoken');
+  fetch('/api/v1/rest-auth/login/', {
+    method:'POST',
+    headers:{
+      'X-CSRFToken': csrftoken,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  })
+    .then(response => response.json())
+    .then(data => {if(data.key){
+        Cookies.set('Authorization', `Token ${data.key}`);
+        this.setState({isLoggedIn:true, display:'home'})
+      }})
+    .catch(error => console.log('Error:', error));
+  }
+  logOut(){
+  const csrftoken = Cookies.get('csrftoken');
+  fetch('/api/v1/rest-auth/logout/', {
+    method: 'POST',
+    headers: {
+      'X-CSRFToken': csrftoken,
+      'Content-Type': 'application/json',
+    }
+  })
+    .then(response => response.json())
+    .then(data => {if(data.detail === 'Successfully logged out.'){
+          Cookies.remove('Authorization');
+          this.setState({isLoggedIn:false, display:'home'})
+        }})
+    .catch(error => console.log('Error:', error));
+  }
+
+  // <BlogForm addBlog={this.addBlog}/>
+  // <StatusList blogs={this.state.blogs} deleteBlog={this.deleteBlog} editBlog={this.editBlog}/>
 
   render(){
     let selection = this.state.blogs;
@@ -115,28 +194,51 @@ class App extends Component{
                     <div className="col-4"><h5 className="last-week-stories">Last Week</h5>
                     {blogs}
                 </div></div>
-      } else if (display === 'form') {
-        html = <BlogForm addBlog={this.addBlog}/>
-      } else if (display === 'status') {
-        html = <StatusList blogs={this.state.blogs} deleteBlog={this.deleteBlog} editBlog={this.editBlog}/>
+      } else if (display === 'register') {
+        html =  <RegisterForm registerUser={this.registerUser}/> //blogform used to be here
+
+      } else if (display === 'login') {
+        html = <LoginForm logIn={this.logIn}/> //status list used to be here
+      } else if (display === 'pickedBlog') {
+        html = <FullBlog pickedBlog={this.state.pickedBlog}/>
       }
+      let loggedInHtml;
+      if(display === 'form'){
+        loggedInHtml = <BlogForm addBlog={this.addBlog}/>
+      } else if (display === 'StatusList') {
+        loggedInHtml = <StatusList blogs={this.state.blogs} deleteBlog={this.deleteBlog} editBlog={this.editBlog}/>
+      } else if (display === 'home') {
+        loggedInHtml = <div className="row"> <div className="col-8"><h5 className='top-stories-heading'>Top Stories</h5><BlogList blogs={selection} truncate={this.truncate} pickBlog={this.pickBlog}/></div>
+                    <div className="col-4"><h5 className="last-week-stories">Last Week</h5>
+                    {blogs}
+                </div></div>
+      } else if (display === 'pickedBlog') {
+        loggedInHtml = <FullBlog pickedBlog={this.state.pickedBlog}/>
+      }
+      const isLoggedIn = this.state.isLoggedIn;
 
     return(
       <React.Fragment>
       <div>
         <nav className="navbar navbar-dark bg-dark">
-          <button className="btn btn-dark" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>
+          {isLoggedIn === false?<button className="btn btn-dark" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>
+          : <button className="btn btn-dark" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>}
           <button className="btn btn-dark"type='button' onClick={this.handleClick} data-filter="Entertainment">Entertainment</button>
           <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="Sports">Sports</button>
           <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="Travel">Travel</button>
           <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="Food">Food</button>
-          <button className="btn btn-dark" onClick={() => this.setState({display: 'status'})} type='button'>Status List</button>
-          <button className="btn btn-dark" onClick={() => this.setState({display: 'form'})} type='button'>Form</button>
+          {isLoggedIn === false?<button className="btn btn-dark" onClick={() => this.setState({display: 'register'})}>Register</button>
+          : <button className="btn btn-dark" onClick={() => this.setState({display: 'form'})}>Form</button>}
+          {isLoggedIn === false?''
+          : <button className="btn btn-dark" onClick={() => this.setState({display: 'StatusList'})}>Status List</button> }
+          {isLoggedIn === false?<button className="btn btn-dark" onClick={() => this.setState({display: 'login'})} type='button'>Log in</button>
+          : <button className="btn btn-dark" onClick={this.logOut}>Logout</button> }
         </nav>
-        <div className="row no-gutters">
-            {html}
+        <div className="row no-gutters mt-4">
+        {isLoggedIn === true? loggedInHtml
+          : html
+        }
         </div>
-        <FullBlog pickedBlog={this.state.pickedBlog}/>
       </div>
       </React.Fragment>
     )
@@ -146,8 +248,8 @@ class App extends Component{
 class FullBlog extends Component{
   render(props){
     return(
-      <div className="col">
-        <div>
+      <div className="col list-group mb-1">
+        <div className="list-group-item">
           <h5>{this.props.pickedBlog.title}</h5>
           <p>{this.props.pickedBlog.author}</p>
           <p>{this.props.pickedBlog.body}</p>

@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+import os
 
 from pathlib import Path
 
@@ -36,12 +37,20 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sites',
     'django.contrib.staticfiles',
 
     #3rd party
+    'rest_auth',
+    'rest_framework.authtoken',
     'rest_framework',
 
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+
     #Local
+    'api.apps.ApiConfig',
     'blogs.apps.BlogsConfig',
 ]
 
@@ -124,3 +133,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+#https://docs.djangoproject.com/en/3.1/ref/settings/#staticfiles-dirs
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'frontend/static/build/static'),)
+REACT_APP_DIR = os.path.join(BASE_DIR, 'frontend/static')
+SITE_ID = 1
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
