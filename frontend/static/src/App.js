@@ -234,7 +234,7 @@ class App extends Component{
           {isLoggedIn === false?<button className="btn btn-dark" onClick={() => this.setState({display: 'login'})} type='button'>Log in</button>
           : <button className="btn btn-dark" onClick={this.logOut}>Logout</button> }
         </nav>
-        <div className="row no-gutters mt-4">
+        <div className="row no-gutters mt-4 form">
         {isLoggedIn === true? loggedInHtml
           : html
         }
