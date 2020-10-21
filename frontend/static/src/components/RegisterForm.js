@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Register.css'
 
 class RegisterForm extends Component {
   constructor(props){
@@ -16,7 +17,7 @@ class RegisterForm extends Component {
   }
   render(){
     return(
-      <form className="col-12 col-md-6" onSubmit={(event) => this.props.registerUser(event, this.state)}>
+      <form className="col-12 col-md-6 register" onSubmit={(event) => this.props.registerUser(event, this.state)}>
         <h5 className="Register">Create Account</h5>
         <div className="form-group">
           <label htmlFor="username">Username</label>

@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Login.css'
 
 class LoginForm extends Component{
   constructor(props){
@@ -17,7 +18,7 @@ class LoginForm extends Component{
   render(){
     return(
       <React.Fragment>
-      <form className="col-12 col-md-6" onSubmit={(event) => this.props.logIn(event, this.state)}>
+      <form className="col-12 col-md-6 log-in" onSubmit={(event) => this.props.logIn(event, this.state)}>
         <h5 className="Register">Log in</h5>
         <div className="form-group">
           <label htmlFor="username">Username</label>

@@ -219,21 +219,25 @@ class App extends Component{
     return(
       <React.Fragment>
       <div>
-        <nav className="navbar navbar-dark bg-dark">
-          {isLoggedIn === false?<button className="btn btn-dark" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>
-          : <button className="btn btn-dark" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>}
-          <button className="btn btn-dark"type='button' onClick={this.handleClick} data-filter="ENT">Entertainment</button>
-          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="SPRT">Sports</button>
-          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="TVL">Travel</button>
-          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="FD">Food</button>
-          {isLoggedIn === false?<button className="btn btn-dark" onClick={() => this.setState({display: 'register'})}>Register</button>
-          : <button className="btn btn-dark" onClick={() => this.setState({display: 'form'})}>Form</button>}
-          {isLoggedIn === false?''
-          : <button className="btn btn-dark" onClick={() => this.setState({display: 'StatusList'})}>Status List</button> }
-          {isLoggedIn === false?<button className="btn btn-dark" onClick={() => this.setState({display: 'login'})} type='button'>Log in</button>
-          : <button className="btn btn-dark" onClick={this.logOut}>Logout</button> }
+        <nav className="navbar navbar-dark bg-dark container-fluid">
+          <div>
+            {isLoggedIn === false?<button className="btn btn-dark" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>
+            : <button className="btn btn-dark" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>}
+            <button className="btn btn-dark"type='button' onClick={this.handleClick} data-filter="ENT">Entertainment</button>
+            <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="SPRT">Sports</button>
+            <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="TVL">Travel</button>
+            <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="FD">Food</button>
+          </div>
+          <div>
+            {isLoggedIn === false?<button className="btn btn-dark" onClick={() => this.setState({display: 'register'})}>Register</button>
+            : <button className="btn btn-dark" onClick={() => this.setState({display: 'form'})}>Form</button>}
+            {isLoggedIn === false?''
+            : <button className="btn btn-dark" onClick={() => this.setState({display: 'StatusList'})}>Status List</button> }
+            {isLoggedIn === false?<button className="btn btn-dark" onClick={() => this.setState({display: 'login'})} type='button'>Log in</button>
+            : <button className="btn btn-dark" onClick={this.logOut}>Logout</button> }
+          </div>
         </nav>
-        <div className="row no-gutters mt-4 form">
+        <div className="row no-gutters mt-4">
         {isLoggedIn === true? loggedInHtml
           : html
         }

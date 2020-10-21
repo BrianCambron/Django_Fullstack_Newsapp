@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
+import './StatusList.css'
 
 class StatusListItem extends Component{
   constructor(props){
     super(props);
     this.state = {
-      title:'',
-      body:'',
+      title: this.props.blog.title,
+      body:this.props.blog.body,
       category:'TVL',
       created_at: new Date(),
       status:'DFT',
@@ -29,19 +30,19 @@ class StatusListItem extends Component{
     created_at: this.state.created_at,
     status: this.state.status,
   };
-    this.props.editBlog(updatedBlog, this.props.blogs.id);
+    this.props.editBlog(updatedBlog, this.props.blog.id);
     this.toggleEdit();
   }
   render(){
     return(
-      <li className="list-group-item list-group-item-action col"key={this.props.blogs.id}>
+      <li className="list-group-item list-group-item-action col"key={this.props.blog.id}>
       {this.state.isEditing?
         <div className="form-group">
           <label htmlFor="title">Title</label>
           <input type="text" className ="form-control" id="title" name="title" value={this.state.title} onChange={this.handleInput}/>
         </div>
-        :<h3>{this.props.blogs.title}</h3>}
-      <p>{this.props.blogs.author}</p>
+        :<h3>{this.props.blog.title}</h3>}
+      <p>{this.props.blog.author}</p>
       {
         this.state.isEditing
         ? <React.Fragment>
@@ -64,14 +65,14 @@ class StatusListItem extends Component{
           </select>
         </div>
         </React.Fragment>
-        : <p>{this.props.blogs.body}</p>
+        : <p>{this.props.blog.body}</p>
       }
       {
         this.state.isEditing
         ? <button className="btn btn-link" onClick={this.handleSave} type='button'>Save</button>
         : <button className="btn btn-link" onClick={() => this.toggleEdit()}>Edit</button>
       }
-      <button className="btn btn-danger" onClick={() => this.props.deleteBlog(this.props.blogs.id)}>&#x2718;</button>
+      <button className="btn btn-danger" onClick={() => this.props.deleteBlog(this.props.blog.id)}>&#x2718;</button>
       </li>
     )
   }
@@ -103,9 +104,9 @@ class StatusList extends Component {
       selection = this.props.blogs.filter(blog => blog.status === this.state.status);
     }
     const blogs = selection
-    .map(blog => <StatusListItem blogs={blog} key={blog.id} deleteBlog={this.props.deleteBlog} editBlog={this.props.editBlog}/>)
+    .map(blog => <StatusListItem blog={blog} key={blog.id} deleteBlog={this.props.deleteBlog} editBlog={this.props.editBlog}/>)
     return(
-      <div>
+      <div className='col-8 status-list'>
         <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="all">All Status's</button>
         <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="DFT">Draft</button>
         <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="PBSHD">Published</button>
