@@ -6,9 +6,9 @@ class StatusListItem extends Component{
     this.state = {
       title:'',
       body:'',
-      category:'Travel',
+      category:'TVL',
       created_at: new Date(),
-      status:'Draft',
+      status:'DFT',
       isEditing: false,
     }
     this.handleInput = this.handleInput.bind(this)
@@ -49,18 +49,18 @@ class StatusListItem extends Component{
         <div className="form-group">
           <label htmlFor="category">Category</label>
           <select id="category" className="form-control" name="category" value={this.state.category} onChange={this.handleInput}>
-            <option>Travel</option>
-            <option>Sports</option>
-            <option>Entertainment</option>
-            <option>Food</option>
+            <option>TVL</option>
+            <option>SPRT</option>
+            <option>ENT</option>
+            <option>FD</option>
           </select>
         </div>
         <div className="form-group">
           <label htmlFor="status">Post Status</label>
           <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleInput}>
-            <option>Draft</option>
-            <option>Submitted</option>
-            <option>Published</option>
+            <option>DFT</option>
+            <option>SMTD</option>
+            <option>PBSHD</option>
           </select>
         </div>
         </React.Fragment>
@@ -107,9 +107,9 @@ class StatusList extends Component {
     return(
       <div>
         <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="all">All Status's</button>
-        <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="Draft">Draft</button>
-        <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="Published">Published</button>
-        <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="Submitted">Submitted</button>
+        <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="DFT">Draft</button>
+        <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="PBSHD">Published</button>
+        <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="SMTD">Submitted</button>
         {blogs}
       </div>
     )

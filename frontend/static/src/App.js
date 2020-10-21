@@ -176,7 +176,7 @@ class App extends Component{
     }
 
     const blogs = selection
-      .filter(blog => !blog.isTopStory)
+      .filter(blog => !blog.isTopStory && blog.status === 'PBSHD')
       .map(blog =>(
           <div onClick={() => this.pickBlog(blog.id)} key={blog.id}>
             <ul className="list-group mb-1">
@@ -216,17 +216,16 @@ class App extends Component{
         loggedInHtml = <FullBlog pickedBlog={this.state.pickedBlog}/>
       }
       const isLoggedIn = this.state.isLoggedIn;
-
     return(
       <React.Fragment>
       <div>
         <nav className="navbar navbar-dark bg-dark">
           {isLoggedIn === false?<button className="btn btn-dark" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>
           : <button className="btn btn-dark" type='button' onClick={() => {this.setState({display:'home'}); this.setState({selection: null});}} data-filter="all">HomePage</button>}
-          <button className="btn btn-dark"type='button' onClick={this.handleClick} data-filter="Entertainment">Entertainment</button>
-          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="Sports">Sports</button>
-          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="Travel">Travel</button>
-          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="Food">Food</button>
+          <button className="btn btn-dark"type='button' onClick={this.handleClick} data-filter="ENT">Entertainment</button>
+          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="SPRT">Sports</button>
+          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="TVL">Travel</button>
+          <button className="btn btn-dark" type='button' onClick={this.handleClick} data-filter="FD">Food</button>
           {isLoggedIn === false?<button className="btn btn-dark" onClick={() => this.setState({display: 'register'})}>Register</button>
           : <button className="btn btn-dark" onClick={() => this.setState({display: 'form'})}>Form</button>}
           {isLoggedIn === false?''

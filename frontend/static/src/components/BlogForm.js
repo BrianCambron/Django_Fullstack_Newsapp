@@ -11,8 +11,8 @@ class BlogForm extends Component{
       author: '',
       isTopStory: false,
       created_at: new Date(),
-      category:'Travel',
-      status:'Draft',
+      category:'TVL',
+      status:'DFT',
     }
     this.handleChange = this.handleChange.bind(this)
   }
@@ -37,18 +37,18 @@ class BlogForm extends Component{
         <div className="form-group">
           <label htmlFor="category">Category</label>
           <select id="category" className="form-control" name="category" value={this.state.category} onChange={this.handleChange}>
-            <option>Travel</option>
-            <option>Sports</option>
-            <option>Entertainment</option>
-            <option>Food</option>
+            <option>TVL</option>
+            <option>SPRT</option>
+            <option>ENT</option>
+            <option>FD</option>
           </select>
         </div>
         <div className="form-bottom">
           <label htmlFor="status">Post Status</label>
           <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleChange}>
-            <option>Draft</option>
-            <option>Submitted</option>
-            <option>Published</option>
+            <option>DFT</option>
+            <option>SMTD</option>
+            <option>PBSHD</option>
           </select>
         </div>
         <button type="submit" className="btn btn-primary">Add Post</button>
