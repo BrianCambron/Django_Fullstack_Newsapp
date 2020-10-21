@@ -216,6 +216,7 @@ class App extends Component{
         loggedInHtml = <FullBlog pickedBlog={this.state.pickedBlog}/>
       }
       const isLoggedIn = this.state.isLoggedIn;
+      // console.log(isLoggedIn);
     return(
       <React.Fragment>
       <div>
