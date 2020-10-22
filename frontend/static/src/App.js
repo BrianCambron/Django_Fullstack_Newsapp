@@ -3,7 +3,8 @@ import BlogList from './components/BlogList';
 import BlogForm from './components/BlogForm';
 import StatusList from './components/StatusList';
 import RegisterForm from './components/RegisterForm';
-import LoginForm from './components/LoginForm'
+import LoginForm from './components/LoginForm';
+import CreateProfile from './components/CreateProfile'
 import Cookies from 'js-cookie';
 import './App.css';
 
@@ -243,6 +244,7 @@ class App extends Component{
           : html
         }
         </div>
+        <CreateProfile />
       </div>
       </React.Fragment>
     )
