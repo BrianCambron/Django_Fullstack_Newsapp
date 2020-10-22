@@ -18,6 +18,7 @@ class App extends Component{
       pickedBlog: {},
       display: 'home',
       isLoggedIn: Cookies.get('Authorization')? true: false,
+      // is_staff: localStorage.getItem('is_staff') ? true : false,
     }
     this.handleClick = this.handleClick.bind(this)
     this.truncate = this.truncate.bind(this)
@@ -31,10 +32,10 @@ class App extends Component{
   }
 
   componentDidMount(){
-    fetch('api/v1/blogs')
-    .then(response => response.json())
-    .then(data => this.setState({blogs: data}))
-    .catch(error => console.log('Error:', error));
+      fetch('api/v1/blogs')
+      .then(response => response.json())
+      .then(data => this.setState({blogs: data}))
+      .catch(error => console.log('Error:', error));
   }
   addBlog(event, data){
     event.preventDefault();
@@ -126,7 +127,8 @@ class App extends Component{
     .then(response => response.json())
     .then(data => {if(data.key){
         Cookies.set('Authorization', `Token ${data.key}`);
-        this.setState({isLoggedIn:true, display:'home'})
+        this.setState({isLoggedIn:true, display:'home'});
+        localStorage.setItem('is_staff', data.is_staff);
       }})
     .catch(error => console.log('Error:', error));
   }
@@ -145,8 +147,10 @@ class App extends Component{
     .then(response => response.json())
     .then(data => {if(data.key){
         Cookies.set('Authorization', `Token ${data.key}`);
-        this.setState({isLoggedIn:true, display:'home'})
-      }})
+        this.setState({isLoggedIn:true, display:'home',})
+        localStorage.setItem('is_staff', data.is_staff)
+      }
+    })
     .catch(error => console.log('Error:', error));
   }
   logOut(){
@@ -161,7 +165,8 @@ class App extends Component{
     .then(response => response.json())
     .then(data => {if(data.detail === 'Successfully logged out.'){
           Cookies.remove('Authorization');
-          this.setState({isLoggedIn:false, display:'home'})
+          this.setState({isLoggedIn:false, display:'home',})
+          localStorage.removeItem('is_staff');
         }})
     .catch(error => console.log('Error:', error));
   }
@@ -207,7 +212,7 @@ class App extends Component{
       if(display === 'form'){
         loggedInHtml = <BlogForm addBlog={this.addBlog}/>
       } else if (display === 'StatusList') {
-        loggedInHtml = <StatusList blogs={this.state.blogs} deleteBlog={this.deleteBlog} editBlog={this.editBlog}/>
+        loggedInHtml = <StatusList deleteBlog={this.deleteBlog} editBlog={this.editBlog}/>
       } else if (display === 'home') {
         loggedInHtml = <div className="row"> <div className="col-8"><h5 className='top-stories-heading'>Top Stories</h5><BlogList blogs={selection} truncate={this.truncate} pickBlog={this.pickBlog}/></div>
                     <div className="col-4"><h5 className="last-week-stories">Last Week</h5>
@@ -215,9 +220,12 @@ class App extends Component{
                 </div></div>
       } else if (display === 'pickedBlog') {
         loggedInHtml = <FullBlog pickedBlog={this.state.pickedBlog}/>
+      } else if (display === 'profile') {
+        loggedInHtml = <CreateProfile />
       }
       const isLoggedIn = this.state.isLoggedIn;
       // console.log(isLoggedIn);
+      // console.log(localStorage);
     return(
       <React.Fragment>
       <div>
@@ -235,6 +243,9 @@ class App extends Component{
             : <button className="btn btn-dark" onClick={() => this.setState({display: 'form'})}>Form</button>}
             {isLoggedIn === false?''
             : <button className="btn btn-dark" onClick={() => this.setState({display: 'StatusList'})}>Status List</button> }
+            {isLoggedIn === false?''
+            : <button className="btn btn-dark" onClick={() => this.setState({display: 'profile'})}>Profile</button>
+            }
             {isLoggedIn === false?<button className="btn btn-dark" onClick={() => this.setState({display: 'login'})} type='button'>Log in</button>
             : <button className="btn btn-dark" onClick={this.logOut}>Logout</button> }
           </div>
@@ -244,7 +255,6 @@ class App extends Component{
           : html
         }
         </div>
-        <CreateProfile />
       </div>
       </React.Fragment>
     )

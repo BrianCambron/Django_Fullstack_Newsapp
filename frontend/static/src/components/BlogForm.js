@@ -19,8 +19,13 @@ class BlogForm extends Component{
   handleChange(event){
     this.setState({[event.target.name]: event.target.value});
   }
+
   render(){
+    const is_staff = localStorage.getItem('is_staff');
+
+    console.log('is_staff', is_staff);
     return(
+      <React.Fragment>
       <form className="col-12 col-md-6 mb-5 form" onSubmit={(event) => {this.props.addBlog(event, this.state); this.setState({title:'', body:'', author:''})}}>
         <div className="form-group">
           <label htmlFor="title">Title</label>
@@ -37,22 +42,31 @@ class BlogForm extends Component{
         <div className="form-group">
           <label htmlFor="category">Category</label>
           <select id="category" className="form-control" name="category" value={this.state.category} onChange={this.handleChange}>
-            <option>TVL</option>
-            <option>SPRT</option>
-            <option>ENT</option>
-            <option>FD</option>
+            <option value="TVL">Travel</option>
+            <option value="SPRT">Sports</option>
+            <option value="ENT">Entertainment</option>
+            <option value="FD">Food</option>
           </select>
         </div>
+        {is_staff === false?
         <div className="form-bottom">
           <label htmlFor="status">Post Status</label>
-          <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleChange}>
-            <option>DFT</option>
-            <option>SMTD</option>
-            <option>PBSHD</option>
-          </select>
+            <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleChange}>
+            <option value="DFT">Draft</option>
+            <option value="SMTD">Submitted</option>
+            </select>
         </div>
+        : <div className="form-bottom">
+          <label htmlFor="status">Post Status</label>
+            <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleChange}>
+              <option value="DFT">Draft</option>
+              <option value="SMTD">Submitted</option>
+              <option value="PBSHD">Published</option>
+            </select>
+          </div> }
         <button type="submit" className="btn btn-primary">Add Post</button>
       </form>
+      </React.Fragment>
     )
   }
 }

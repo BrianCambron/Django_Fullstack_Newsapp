@@ -11,28 +11,29 @@ class CreateProfile extends Component {
     this.addPicture = this.addPicture.bind(this)
     this.handleImage = this.handleImage.bind(this)
   }
-  addPicture(event, file){
+
+  addPicture(event){
     event.preventDefault();
-    // const formData = new FormData().append('avatar', file.name);
+    const formData = new FormData()
+    formData.append('avatar', this.state.image);
+
     const csrftoken = Cookies.get('csrftoken');
+
     fetch('/api/v1/profile/', {
       method: 'POST',
       headers: {
         'X-CSRFToken': csrftoken,
-        'Content-Type': 'multipart/form-data;boundary="boundary"'
       },
-      body: JSON.stringify(file),
+      body: formData
     })
     .then(response => response.json())
-    .then(data => {
-      const formData = new FormData();
-      formData.append('avatar', file);
-    })
+    .then(data => {console.log(data)})
     .catch(error => console.log("Error:", error));
   }
 
   handleImage(e){
     let file = e.target.files[0];
+    console.log(file);
     this.setState({
       image: file
     });
@@ -48,7 +49,7 @@ class CreateProfile extends Component {
   }
   render(){
     return(
-      <form className="col-12 col-md-6 mb-5" onSubmit={(event) => this.addPicture(event, this.state)}>
+      <form className="col-12 col-md-6 mb-5 ml-5" onSubmit={(event) => this.addPicture(event, this.state)}>
         <div className="form-group">
           <label htmlFor="avatar">Choose a profile picture:</label>
           <input type='file' id="avatar" name="avatar" onChange={this.handleImage}/>

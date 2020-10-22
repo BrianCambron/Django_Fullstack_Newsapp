@@ -85,8 +85,26 @@ class StatusList extends Component {
     super(props);
     this.state = {
       status: null,
+      blogs: [],
     }
     this.handleClick = this.handleClick.bind(this)
+  }
+  componentDidMount(){
+    const is_staff = localStorage.getItem('is_staff');
+
+    console.log('is_staff', is_staff);
+    if(is_staff) {
+      fetch('api/v1/blogs/user')
+      .then(response => response.json())
+      .then(data => this.setState({blogs: data}))
+      .catch(error => console.log('Error:', error));
+    }
+    else {
+      fetch('api/v1/blogs/admin')
+      .then(response => response.json())
+      .then(data => this.setState({blogs: data}))
+      .catch(error => console.log('Error:', error));
+    }
   }
 
   handleClick(event) {
@@ -98,13 +116,14 @@ class StatusList extends Component {
   }
 
   render(){
-    let selection = this.props.blogs;
+    let selection = this.state.blogs;
 
     if(this.state.status) {
-      selection = this.props.blogs.filter(blog => blog.status === this.state.status);
+      selection = this.state.blogs.filter(blog => blog.status === this.state.status);
     }
     const blogs = selection
-    .map(blog => <StatusListItem blog={blog} key={blog.id} deleteBlog={this.props.deleteBlog} editBlog={this.props.editBlog}/>)
+    .map(blog => <StatusListItem blog={blog} key={blog.id} deleteBlog={this.props.deleteBlog} editBlog={this.props.editBlog}/>);
+    console.log(blogs);
     return(
       <div className='col-8 status-list'>
         <button className="btn btn-link" type='button' onClick={this.handleClick} data-filter="all">All Status's</button>
