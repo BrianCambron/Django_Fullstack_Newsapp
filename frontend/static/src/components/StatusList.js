@@ -50,18 +50,18 @@ class StatusListItem extends Component{
         <div className="form-group">
           <label htmlFor="category">Category</label>
           <select id="category" className="form-control" name="category" value={this.state.category} onChange={this.handleInput}>
-            <option>TVL</option>
-            <option>SPRT</option>
-            <option>ENT</option>
-            <option>FD</option>
+            <option value="TVL">Travel</option>
+            <option value="SPRT">Sports</option>
+            <option value="ENT">Entertainment</option>
+            <option value="FD">Food</option>
           </select>
         </div>
         <div className="form-group">
           <label htmlFor="status">Post Status</label>
           <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleInput}>
-            <option>DFT</option>
-            <option>SMTD</option>
-            <option>PBSHD</option>
+            <option value="DFT">Draft</option>
+            <option value="SMTD">Submitted</option>
+            <option value="PBSHD">Published</option>
           </select>
         </div>
         </React.Fragment>
@@ -93,7 +93,7 @@ class StatusList extends Component {
     const is_staff = localStorage.getItem('is_staff');
 
     console.log('is_staff', is_staff);
-    if(is_staff) {
+    if(is_staff === 'false') {
       fetch('api/v1/blogs/user')
       .then(response => response.json())
       .then(data => this.setState({blogs: data}))

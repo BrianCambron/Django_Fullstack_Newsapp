@@ -7,6 +7,7 @@ class Blog(models.Model):
     SUBMITTED = 'SMTD'
     PUBLISHED = 'PBSHD'
     APPROVED = 'APV'
+    REJECTED = 'RJCT'
 
     ENTERTAINMENT = 'ENT'
     SPORTS = 'SPRT'
@@ -17,7 +18,8 @@ class Blog(models.Model):
         (DRAFT, 'Draft'),
         (SUBMITTED, 'Submitted'),
         (PUBLISHED, 'Published'),
-        (APPROVED, 'Approved')
+        (APPROVED, 'Approved'),
+        (REJECTED, 'Rejected')
     }
 
     CATEGORY_CHOICES = {

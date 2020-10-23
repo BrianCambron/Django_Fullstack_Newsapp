@@ -148,7 +148,7 @@ class App extends Component{
     .then(data => {if(data.key){
         Cookies.set('Authorization', `Token ${data.key}`);
         this.setState({isLoggedIn:true, display:'home',})
-        localStorage.setItem('is_staff', data.is_staff)
+        localStorage.setItem('is_staff', data.is_staff);
       }
     })
     .catch(error => console.log('Error:', error));
@@ -251,7 +251,7 @@ class App extends Component{
           </div>
         </nav>
         <div className="row no-gutters mt-4">
-        {isLoggedIn === true? loggedInHtml
+        {isLoggedIn === true ? loggedInHtml
           : html
         }
         </div>
