@@ -11,5 +11,5 @@ urlpatterns = [
     path('user/', UserBlogList.as_view()),
     path('admin/', AdminBlogListCreateView.as_view()),
     path('user/<int:pk>/', UserDetailList.as_view()),
-    path('admin/<int:pk>', AdminListDetailView.as_view()),
+    path('admin/<int:pk>/', AdminListDetailView.as_view()),
 ]

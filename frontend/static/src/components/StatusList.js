@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Cookies from 'js-cookie';
 import './StatusList.css'
 
 class StatusListItem extends Component{
@@ -34,6 +35,9 @@ class StatusListItem extends Component{
     this.toggleEdit();
   }
   render(){
+    const is_staff = localStorage.getItem('is_staff');
+    console.log('is_staff', is_staff);
+
     return(
       <li className="list-group-item list-group-item-action col"key={this.props.blog.id}>
       {this.state.isEditing?
@@ -72,7 +76,10 @@ class StatusListItem extends Component{
         ? <button className="btn btn-link" onClick={this.handleSave} type='button'>Save</button>
         : <button className="btn btn-link" onClick={() => this.toggleEdit()}>Edit</button>
       }
-      <button className="btn btn-danger" onClick={() => this.props.deleteBlog(this.props.blog.id)}>&#x2718;</button>
+      {is_staff === 'false'?
+        <button className="btn btn-danger" onClick={() => this.props.userdeleteBlog(this.props.blog.id)}>&#x2718;</button>
+      : <button className="btn btn-danger" onClick={() => this.props.admindeleteBlog(this.props.blog.id)}>&#x2718;</button>
+      }
       </li>
     )
   }
@@ -88,11 +95,14 @@ class StatusList extends Component {
       blogs: [],
     }
     this.handleClick = this.handleClick.bind(this)
+    this.admindeleteBlog = this.admindeleteBlog.bind(this)
+    this.userdeleteBlog = this.userdeleteBlog.bind(this)
   }
+
   componentDidMount(){
     const is_staff = localStorage.getItem('is_staff');
 
-    console.log('is_staff', is_staff);
+    // console.log('is_staff', is_staff);
     if(is_staff === 'false') {
       fetch('api/v1/blogs/user')
       .then(response => response.json())
@@ -105,6 +115,45 @@ class StatusList extends Component {
       .then(data => this.setState({blogs: data}))
       .catch(error => console.log('Error:', error));
     }
+  }
+
+  admindeleteBlog(id){
+  const csrftoken = Cookies.get('csrftoken');
+  fetch(`api/v1/blogs/admin/${id}/`, {
+    method: 'DELETE',
+    headers:{
+      'X-CSRFToken': csrftoken,
+      'Content-Type': 'application/json'
+    },
+  })
+  .then(response => response)
+  .then(data => {
+    const blogs = [...this.state.blogs]
+    console.log('blogs', blogs)
+    const index = blogs.findIndex(blog => blog.id === id)
+    blogs.splice(index,1);
+    this.setState({blogs})
+  })
+  .catch(error => console.log("Error:", error));
+  }
+  userdeleteBlog(id){
+  const csrftoken = Cookies.get('csrftoken');
+  fetch(`api/v1/blogs/user/${id}/`, {
+    method: 'DELETE',
+    headers:{
+      'X-CSRFToken': csrftoken,
+      'Content-Type': 'application/json'
+    },
+  })
+  .then(response => response)
+  .then(data => {
+    const blogs = [...this.state.blogs]
+    console.log('blogs', blogs)
+    const index = blogs.findIndex(blog => blog.id === id)
+    blogs.splice(index,1);
+    this.setState({blogs})
+  })
+  .catch(error => console.log("Error:", error));
   }
 
   handleClick(event) {
@@ -122,7 +171,7 @@ class StatusList extends Component {
       selection = this.state.blogs.filter(blog => blog.status === this.state.status);
     }
     const blogs = selection
-    .map(blog => <StatusListItem blog={blog} key={blog.id} deleteBlog={this.props.deleteBlog} editBlog={this.props.editBlog}/>);
+    .map(blog => <StatusListItem blog={blog} key={blog.id} admindeleteBlog={this.admindeleteBlog} userdeleteBlog={this.userdeleteBlog} editBlog={this.props.editBlog}/>);
     console.log(blogs);
     return(
       <div className='col-8 status-list'>

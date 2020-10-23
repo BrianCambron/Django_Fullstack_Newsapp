@@ -5,7 +5,12 @@ class MyCustomPermission(permissions.BasePermission):
 
      def has_object_permission(self, request, view, obj):
 
-         if obj.status == 'DFT' or not request.method == 'DELETE':
-             return True
+         if not obj.status == 'DFT' and request.method == 'DELETE':
+             return False
+         # else:
+         #     raise PermissionDenied('request not permitted')
+
+         elif obj.status == 'SMTD' and request.method == 'PUT' or request.method == 'PATCH':
+             return False
          else:
-             raise PermissionDenied('request not permitted')
+             return True

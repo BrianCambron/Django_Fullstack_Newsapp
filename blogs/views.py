@@ -44,7 +44,6 @@ class AdminListDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class UserBlogList(generics.ListAPIView):
      serializer_class = BlogSerializer
-
      def get_queryset(self):
          user = self.request.user
          return Blog.objects.filter(user=user)
