@@ -24,19 +24,46 @@ class StatusListItem extends Component{
     this.setState({isEditing: !this.state.isEditing});
   }
   handleSave(props){
-  const updatedBlog = {
+    const is_staff = localStorage.getItem('is_staff');
+    console.log('is_staff', is_staff);
+    const updatedBlog = {
     title: this.state.title,
     body: this.state.body,
     category: this.state.category,
     created_at: this.state.created_at,
     status: this.state.status,
   };
-    this.props.editBlog(updatedBlog, this.props.blog.id);
+  if (is_staff === 'false') {
+    this.props.usereditBlog(updatedBlog, this.props.blog.id)
+  }
+  else {
+    this.props.admineditBlog(updatedBlog, this.props.blog.id)
+  }
     this.toggleEdit();
   }
   render(){
     const is_staff = localStorage.getItem('is_staff');
     console.log('is_staff', is_staff);
+    let html;
+    if (is_staff === 'false') {
+      html =  <div className="form-group">
+                <label htmlFor="status">Post Status</label>
+                <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleInput}>
+                  <option value="DFT">Draft</option>
+                  <option value="SMTD">Submitted</option>
+                </select>
+              </div>
+    }
+    else {
+      html =  <div className="form-group">
+                <label htmlFor="status">Post Status</label>
+                <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleInput}>
+                  <option value="DFT">Draft</option>
+                  <option value="SMTD">Submitted</option>
+                  <option value="PBSHD">Published</option>
+                </select>
+              </div>
+    }
 
     return(
       <li className="list-group-item list-group-item-action col"key={this.props.blog.id}>
@@ -61,12 +88,7 @@ class StatusListItem extends Component{
           </select>
         </div>
         <div className="form-group">
-          <label htmlFor="status">Post Status</label>
-          <select id="status" className="form-control" name="status" value={this.state.status} onChange={this.handleInput}>
-            <option value="DFT">Draft</option>
-            <option value="SMTD">Submitted</option>
-            <option value="PBSHD">Published</option>
-          </select>
+          {html}
         </div>
         </React.Fragment>
         : <p>{this.props.blog.body}</p>
@@ -74,10 +96,10 @@ class StatusListItem extends Component{
       {
         this.state.isEditing
         ? <button className="btn btn-link" onClick={this.handleSave} type='button'>Save</button>
-        : <button className="btn btn-link" onClick={() => this.toggleEdit()}>Edit</button>
+        : <button className="btn btn-link" onClick={() => this.toggleEdit()} style={{display: this.props.blog.status !== 'SMTD' || is_staff === 'true'? 'inline-block':'none'}}>Edit</button>
       }
       {is_staff === 'false'?
-        <button className="btn btn-danger" onClick={() => this.props.userdeleteBlog(this.props.blog.id)}>&#x2718;</button>
+        <button className="btn btn-danger" onClick={() => this.props.userdeleteBlog(this.props.blog.id)} style={{display: this.props.blog.status !== 'SMTD'? 'inline-block':'none'}}>&#x2718;</button>
       : <button className="btn btn-danger" onClick={() => this.props.admindeleteBlog(this.props.blog.id)}>&#x2718;</button>
       }
       </li>
@@ -97,6 +119,8 @@ class StatusList extends Component {
     this.handleClick = this.handleClick.bind(this)
     this.admindeleteBlog = this.admindeleteBlog.bind(this)
     this.userdeleteBlog = this.userdeleteBlog.bind(this)
+    this.admineditBlog = this.admineditBlog.bind(this)
+    this.usereditBlog = this.usereditBlog.bind(this)
   }
 
   componentDidMount(){
@@ -164,6 +188,47 @@ class StatusList extends Component {
     }
   }
 
+  admineditBlog(data, id){
+    const csrftoken = Cookies.get('csrftoken');
+    fetch(`api/v1/blogs/admin/${id}/`,{
+      method:'PUT',
+      headers: {
+      'X-CSRFToken': csrftoken,
+      'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      const blogs = [...this.state.blogs];
+      const index = blogs.findIndex(blog => blog.id === id);
+      blogs[index] = data;
+      this.setState({blogs})
+    })
+    .catch(error => console.log('Error:', error));
+    }
+    usereditBlog(data, id){
+      const csrftoken = Cookies.get('csrftoken');
+      fetch(`api/v1/blogs/user/${id}/`,{
+        method:'PUT',
+        headers: {
+        'X-CSRFToken': csrftoken,
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        const blogs = [...this.state.blogs];
+        const index = blogs.findIndex(blog => blog.id === id);
+        blogs[index] = data;
+        this.setState({blogs})
+      })
+      .catch(error => console.log('Error:', error));
+      }
+
   render(){
     let selection = this.state.blogs;
 
@@ -171,7 +236,7 @@ class StatusList extends Component {
       selection = this.state.blogs.filter(blog => blog.status === this.state.status);
     }
     const blogs = selection
-    .map(blog => <StatusListItem blog={blog} key={blog.id} admindeleteBlog={this.admindeleteBlog} userdeleteBlog={this.userdeleteBlog} editBlog={this.props.editBlog}/>);
+    .map(blog => <StatusListItem blog={blog} key={blog.id} admindeleteBlog={this.admindeleteBlog} userdeleteBlog={this.userdeleteBlog} admineditBlog={this.admineditBlog} usereditBlog={this.usereditBlog}/>);
     console.log(blogs);
     return(
       <div className='col-8 status-list'>

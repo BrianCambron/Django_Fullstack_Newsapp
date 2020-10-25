@@ -24,7 +24,6 @@ class App extends Component{
     this.truncate = this.truncate.bind(this)
     this.pickBlog = this.pickBlog.bind(this)
     this.addBlog = this.addBlog.bind(this)
-    this.editBlog = this.editBlog.bind(this)
     this.registerUser = this.registerUser.bind(this)
     this.logIn = this.logIn.bind(this)
     this.logOut = this.logOut.bind(this)
@@ -52,27 +51,6 @@ class App extends Component{
     const blogs = [...this.state.blogs, data];
     this.setState({blogs});
   })
-  }
-
-  editBlog(data, id){
-    const csrftoken = Cookies.get('csrftoken');
-    fetch(`api/v1/blogs/${id}/`,{
-      method:'PUT',
-      headers: {
-      'X-CSRFToken': csrftoken,
-      'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data),
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data);
-      const blogs = [...this.state.blogs];
-      const index = blogs.findIndex(blog => blog.id === id);
-      blogs[index] = data;
-      this.setState({blogs})
-    })
-    .catch(error => console.log('Error:', error));
   }
 
   handleClick(event) {
@@ -193,7 +171,7 @@ class App extends Component{
       if(display === 'form'){
         loggedInHtml = <BlogForm addBlog={this.addBlog}/>
       } else if (display === 'StatusList') {
-        loggedInHtml = <StatusList editBlog={this.editBlog}/>
+        loggedInHtml = <StatusList />
       } else if (display === 'home') {
         loggedInHtml = <div className="row"> <div className="col-8"><h5 className='top-stories-heading'>Top Stories</h5><BlogList blogs={selection} truncate={this.truncate} pickBlog={this.pickBlog}/></div>
                     <div className="col-4"><h5 className="last-week-stories">Last Week</h5>
