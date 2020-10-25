@@ -1,11 +1,12 @@
 import React from 'react';
-
+import './BlogList.css'
 
 function BlogItem(props){
     return(
       <div onClick={() => props.pickBlog(props.blog.id)} className="col">
         <div className="list-group mb-2">
           <div className="list-group-item list-group-item-action">
+            <img src={props.blog.image} alt="" className="mb-2"/>
             <div className="d-flex w-100 justify-content-between">
               <h5 className="mb-3 left-side-blogtitle">{props.blog.title}</h5>
             </div>

@@ -155,8 +155,8 @@ class App extends Component{
       );
       let html;
       if(display === 'home'){
-        html = <div className="row"> <div className="col-8"><h5 className='top-stories-heading'>Top Stories</h5><BlogList blogs={selection} truncate={this.truncate} pickBlog={this.pickBlog}/></div>
-                    <div className="col-4"><h5 className="last-week-stories">Last Week</h5>
+        html = <div className="row no-gutters"><div className="col-8"><h5 className='top-stories-heading'style={{fontStyle: 'italic'}}>Top Stories</h5><BlogList blogs={selection} truncate={this.truncate} pickBlog={this.pickBlog}/></div>
+                    <div className="col-4"><h5 className="last-week-stories" style={{fontStyle: 'italic'}}>Last Week</h5>
                     {blogs}
                 </div></div>
       } else if (display === 'register') {
@@ -173,8 +173,8 @@ class App extends Component{
       } else if (display === 'StatusList') {
         loggedInHtml = <StatusList />
       } else if (display === 'home') {
-        loggedInHtml = <div className="row"> <div className="col-8"><h5 className='top-stories-heading'>Top Stories</h5><BlogList blogs={selection} truncate={this.truncate} pickBlog={this.pickBlog}/></div>
-                    <div className="col-4"><h5 className="last-week-stories">Last Week</h5>
+        loggedInHtml = <div className="row no-gutters"> <div className="col-8"><h5 className='top-stories-heading' style={{fontStyle: 'italic'}}>Top Stories</h5><BlogList blogs={selection} truncate={this.truncate} pickBlog={this.pickBlog}/></div>
+                    <div className="col-4"><h5 className="last-week-stories"style={{fontStyle: 'italic'}}>Last Week</h5>
                     {blogs}
                 </div></div>
       } else if (display === 'pickedBlog') {
@@ -226,6 +226,9 @@ class FullBlog extends Component{
       <div className="col list-group mb-1">
         <div className="list-group-item">
           <h5>{this.props.pickedBlog.title}</h5>
+          <div>
+            <img src={this.props.pickedBlog.image} alt=""/>
+          </div>
           <p>{this.props.pickedBlog.author}</p>
           <p>{this.props.pickedBlog.body}</p>
         </div>

@@ -33,6 +33,7 @@ class Blog(models.Model):
     title = models.CharField(max_length = 255)
     body = models.TextField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='blogs/', blank=True, null=True)
     isTopStory = models.BooleanField(default = False)
     created_at = models.DateTimeField(auto_now_add = False)
     category = models.CharField(max_length=255, choices=CATEGORY_CHOICES, default=TRAVEL,)
